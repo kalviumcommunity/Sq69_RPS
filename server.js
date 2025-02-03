@@ -1,7 +1,14 @@
+require("dotenv").config();
 const express = require("express");
+const mongoose = require("mongoose");
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = 3000;
+
+// Connect to MongoDB
+mongoose.connect(process.env.MONGO__URI)
+.then(() => console.log("✅ MongoDB Connected"))
+.catch(err => console.error("❌ MongoDB Connection Failed:", err.message));
 
 // Middleware for error handling
 app.use((req, res, next) => {
@@ -9,7 +16,13 @@ app.use((req, res, next) => {
     next();
 });
 
-// /ping route with error handling
+// Home route - Show MongoDB connection status
+app.get("/", (req, res) => {
+    const status = mongoose.connection.readyState === 1 ? "Connected" : "Disconnected";
+    res.json({ database: status });
+});
+
+// /ping route
 app.get("/ping", (req, res, next) => {
     try {
         res.status(200).json({ message: "pong" });
@@ -26,5 +39,6 @@ app.use((err, req, res, next) => {
 
 // Start the server
 app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+    console.log(`🚀 Server is running on http://localhost:${PORT}`);
+
 });
