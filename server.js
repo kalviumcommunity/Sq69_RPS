@@ -8,7 +8,10 @@ const PORT = 3000;
 // Connect to MongoDB
 mongoose.connect(process.env.MONGO__URI)
 .then(() => console.log("✅ MongoDB Connected"))
-.catch(err => console.error("❌ MongoDB Connection Failed:", err.message));
+.catch(err => {
+  console.error("❌ MongoDB Connection Failed:", err.message);
+  process.exit(1);
+});
 
 // Middleware for error handling
 app.use((req, res, next) => {
